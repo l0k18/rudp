@@ -73,7 +73,8 @@ func (rl *RudpListener) run() {
 			rl.newRudpConn <- rudpConn
 		}
 		bts := make([]byte, n)
-		copy(bts, data[:n])
+		dataRead := data[:n]
+		copy(bts, dataRead)
 		rudpConn.in <- bts
 	}
 }

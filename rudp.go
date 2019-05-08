@@ -253,20 +253,20 @@ func (r *Rudp) Input(bts []byte) {
 		r.lastRecvTick = r.currentTick
 	}
 	for sz > 0 {
-		len := int(bts[0])
-		if len > 127 {
+		length := int(bts[0])
+		if length > 127 {
 			if sz <= 1 {
 				r.corrupt.Store(ERROR_MSG_SIZE)
 				return
 			}
-			len = (len*256 + int(bts[1])) & 0x7fff
+			length = (length*256 + int(bts[1])) & 0x7fff
 			bts = bts[2:]
 			sz -= 2
 		} else {
 			bts = bts[1:]
 			sz -= 1
 		}
-		switch len {
+		switch length {
 		case TYPE_PING:
 			r.checkMissing(false)
 		case TYPE_EOF:
@@ -281,22 +281,27 @@ func (r *Rudp) Input(bts []byte) {
 			}
 			exe := r.addRequest
 			max := r.sendID
-			if len == TYPE_MISSING {
+			if length == TYPE_MISSING {
 				exe = r.addMissing
 				max = r.recvIDMax
 			}
+			// this eliminates multiple BCs in the exe function invocation
+			_ = bts[3]
 			exe(r.getID(max, bts[0], bts[1]), r.getID(max, bts[2], bts[3]))
 			bts = bts[4:]
 			sz -= 4
 		default:
-			len -= TYPE_NORMAL
-			if sz < len+2 {
+			length -= TYPE_NORMAL
+			if sz < length+2 {
 				r.corrupt.Store(ERROR_MSG_SIZE)
 				return
 			}
-			r.insertMessage(r.getID(r.recvIDMax, bts[0], bts[1]), bts[2:len+2])
-			bts = bts[len+2:]
-			sz -= len + 2
+			// this prevents most of the bounds checks in the following code and
+			// would fail in the next function call anyway if this is outside
+			_ = bts[4]
+			r.insertMessage(r.getID(r.recvIDMax, bts[0], bts[1]), bts[2:length+2])
+			bts = bts[length+2:]
+			sz -= length + 2
 		}
 	}
 	r.checkMissing(false)

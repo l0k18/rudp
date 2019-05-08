@@ -108,7 +108,8 @@ func (r *RudpConn) rudpRecv(data []byte) error {
 			break
 		}
 		bts := make([]byte, n)
-		copy(bts, data[:n])
+		dataRead := data[:n]
+		copy(bts, dataRead)
 		r.recvChan <- bts
 	}
 	return nil
@@ -121,7 +122,8 @@ func (r *RudpConn) conectedRecvLoop() {
 			r.recvErr <- err
 			return
 		}
-		r.rudp.Input(data[:n])
+		dataRead := data[:n]
+		r.rudp.Input(dataRead)
 		if r.rudpRecv(data) != nil {
 			return
 		}
