@@ -8,7 +8,7 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/u35s/rudp"
+	"git.parallelcoin.io/dev/rudp"
 )
 
 func read(conn *rudp.RudpConn) {

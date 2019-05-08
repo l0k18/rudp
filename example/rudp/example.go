@@ -3,7 +3,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/u35s/rudp"
+	"git.parallelcoin.io/dev/rudp"
 )
 
 var dumpIdx int

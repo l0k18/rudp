@@ -8,7 +8,7 @@ import (
 	"syscall"
 	"time"
 
-	"github.com/u35s/rudp"
+	"git.parallelcoin.io/dev/rudp"
 )
 
 func main() {
